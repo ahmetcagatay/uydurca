@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4A90E2">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uydurca - Kelime Oyunu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #DBF2FD;
+            color: #255193;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .help-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #255193 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 50% !important;
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 1.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
+            z-index: 1000 !important;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 81, 147, 0.4);
+        }
+
+        .help-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .help-content {
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 550px;
+            width: 90%;
+            color: #255193;
+        }
+
+        .help-content h3 {
+            margin-bottom: 20px;
+            color: #255193;
+        }
+
+        .help-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .example {
+            color: #666;
+            font-style: italic;
+            margin-left: 10px;
+        }
+
+        .credits {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #DBF2FD;
+            text-align: center;
+        }
+
+        .credits p {
+            margin-bottom: 10px;
+        }
+
+        .credits a {
+            color: #255193;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: #255193 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            padding: 10px 20px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            margin: 20px auto 0 auto !important;
+            display: block !important;
+        }
+
+        .word-container {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 60px 0 40px 0;
+            flex-wrap: wrap;
+            padding: 15px 5px;
+            position: relative;
+        }
+
+        .draggable {
+            height: 90px;
+            width: 90px;
+            background-color: #FFFFFF !important;
+            color: #255193 !important;
+            border: 2px solid #255193 !important;
+            border-radius: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: bold !important;
+            font-size: 1.1rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
+            user-select: none;
+            touch-action: none;
+            position: relative;
+        }
+
+        .draggable:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 81, 147, 0.4);
+            border-color: #255193;
+        }
+
+        .draggable.is-moving {
+            transform: scale(1.3) translateY(-30px) rotate(5deg) !important;
+            background: #255193 !important;
+            color: #FFF !important;
+            box-shadow: 0 15px 40px rgba(37, 81, 147, 0.5) !important;
+            z-index: 1000 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .draggable.is-moved {
+            background: #255193 !important;
+            color: #FFF !important;
+            transform: scale(1.05) !important;
+        }
+
+        .draggable.gu-transit {
+            opacity: 0.9 !important;
+        }
+
+        .word-container.drag-active .draggable:not(.is-moving) {
+            transition: all 0.3s ease;
+        }
+
+        .draggable.locked {
+            background-color: #255193 !important;
+            color: #FFFFFF !important;
+            cursor: default !important;
+            border: 2px solid #255193 !important;
+            transform: scale(1.05) !important;
+        }
+
+        .draggable.locked:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
+        }
+
+        .finger-demo {
+            position: absolute;
+            font-size: 3rem;
+            z-index: 1500;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .combined-word {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #255193;
+            margin: 30px 0 20px 0;
+            min-height: 40px;
+        }
+
+        .dice-btn {
+            background: #255193 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 50% !important;
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 1.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            margin: 20px !important;
+            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
+        }
+
+        .dice-btn:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 6px 20px rgba(37, 81, 147, 0.4);
+        }
+
+        .game-state {
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .draggable {
+                width: 80px;
+                height: 80px;
+                font-size: 1rem;
+            }
+            
+            .combined-word {
+                font-size: 1.6rem;
+            }
+            
+            .help-content {
+                padding: 20px;
+            }
+            
+            .word-container {
+                gap: 15px;
+                padding: 10px 5px;
+                margin: 40px 0 30px 0;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .draggable {
+                width: 75px;
+                height: 75px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .bounce {
+            animation: bounce 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <button class="help-btn" onclick="showHelp()">🤔</button>
+    
+    <div class="help-modal" id="helpModal">
+        <div class="help-content">
+            <h3>🎮 Nasıl Oynanır?</h3>
+            <p><strong>1. Adım:</strong> Kelimeleri sürükleyerek yerlerini değiştir.<br>
+            <span class="example">Örneğin: KUM + DÜŞ + DIL = KUMDÜŞDIL</span></p>
+            <p><strong>2. Adım:</strong> soru sormak 👍 için butonuna tıkla</p>
+            <p><strong>3. Adım:</strong> Çıkan soruyu yanıtla!<br>
+            <span class="example">Örneğin: "KUMDÜŞDIL filminin konusu nedir?" sorusunu yaratıcılıkla yanıtla! Taşlar kilitlenir ve artık sadece okunabilir.</span></p>
+            
+            <div class="credits">
+                <p>🎨 <strong>yunusemre</strong> | <a href="https://www.instagram.com/yemredemirci" target="_blank">instagram</a></p>
+                <p>👨‍💻 <strong>ahmetcagatay</strong> | <a href="https://www.github.com/ahmetcagatay" target="_blank">github</a></p>
+            </div>
+            
+            <button class="close-btn" onclick="hideHelp()">Anladım!</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="word-container" id="wordContainer">
+            <div class="draggable">UY</div>
+            <div class="draggable">DUR</div>
+            <div class="draggable">CA</div>
+            <div class="finger-demo" id="fingerDemo">👆</div>
+        </div>
+
+        <div class="game-state">
+            <div class="combined-word" id="combinedWord">önce zar atmalısın</div>
+            <button class="dice-btn" onclick="loadNewWords()" title="Yeni kelimeler">🎲</button>
+            <button class="dice-btn" onclick="askQuestion()" title="Soru sor">👍</button>
+        </div>
+    </div>
+
+    <script>
+        var draggedElement = null;
+        var isDragging = false;
+        var startX = 0;
+        var startY = 0;
+        var initialIndex = 0;
+        var hasUserDragged = false;
+        var introInterval = null;
+
+        var words = [
+            "KUM", "DÜŞ", "DİL", "TUR", "TEK", "TAŞ", "ŞOK", "BAŞ", "EL", "MUM", 
+            "TUŞ", "BAL", "AŞK", "BİR", "BOŞ", "CAM", "CAN", "CEP", "ÇOK", "DEM", 
+            "FİL", "FON", "GÖK", "GÖL", "GÖZ", "GÜL", "GÜÇ", "GÜN", "HAN", "HAS", 
+            "HUY", "İZ", "KAR", "KAT", "KIL", "KÖY", "NEM", "ON", "PAY", "PER", 
+            "POZ", "RET", "SOL", "SES", "SİS", "SIK", "SON", "SÜS", "ŞEY", "TAT", 
+            "TEL", "TON", "TUZ", "VAR", "YER", "YAŞ", "YIL", "YOL", "ZAN", "ZEN"
+        ];
+
+        var questions = [
+            "filminin konusu nedir?", "nasıl bir hastalık?", "nasıl bir spor?", "nasıl bir yemek?",
+            "mesleği ne yapar?", "karakterinin süper gücü ne?", "nasıl bir yer?",
+            "bilim dalı hangi konularda araştırma yapar?", "şarkısının hikayesi nedir?",
+            "oyunu nasıl oynanır, kuralları nelerdir?", "TV programının içeriği nasıldır?",
+            "akımı hangi düşünceyi savunur?", "nasıl bir dans?", "olayında neler yaşandı?",
+            "nasıl bir tik?", "mobil uygulaması ne işe yarar?", "bayramı nasıl kutlanır?",
+            "masalı bize ne anlatıyor?", "büyüsü nasıl yapılır?", "ödülünü kim nasıl kazandı?"
+        ];
+
+        var container = document.getElementById('wordContainer');
+
+        function safeAddClass(element, className) {
+            if (element && element.classList) {
+                element.classList.add(className);
+            }
+        }
+
+        function safeRemoveClass(element, className) {
+            if (element && element.classList) {
+                element.classList.remove(className);
+            }
+        }
+
+        function getElementIndex(element) {
+            return Array.from(container.children).indexOf(element);
+        }
+
+        function moveElementToIndex(element, newIndex) {
+            var children = Array.from(container.children);
+            if (newIndex >= children.length) {
+                container.appendChild(element);
+            } else {
+                container.insertBefore(element, children[newIndex]);
+            }
+        }
+
+        function startDrag(element) {
+            if (!element) return;
+            
+            if (!hasUserDragged) {
+                hasUserDragged = true;
+                stopIntroLoop();
+            }
+            
+            draggedElement = element;
+            isDragging = true;
+            initialIndex = getElementIndex(element);
+            
+            safeAddClass(element, 'is-moving');
+            safeAddClass(element, 'gu-transit');
+            safeAddClass(container, 'drag-active');
+            
+            var allCards = Array.from(container.children);
+            allCards.forEach(function(card, index) {
+                if (card !== element) {
+                    if (index === 0) {
+                        card.style.transform = 'translateX(-20px)';
+                    } else if (index === 1) {
+                        card.style.transform = 'translateX(0px)';
+                    } else if (index === 2) {
+                        card.style.transform = 'translateX(20px)';
+                    }
+                }
+            });
+        }
+
+        function endDrag() {
+            if (!draggedElement) return;
+            
+            safeRemoveClass(draggedElement, 'is-moving');
+            safeRemoveClass(draggedElement, 'gu-transit');
+            safeRemoveClass(container, 'drag-active');
+            
+            var allCards = Array.from(container.children);
+            allCards.forEach(function(card) {
+                card.style.transform = '';
+            });
+            
+            setTimeout(function() {
+                safeAddClass(draggedElement, 'is-moved');
+                setTimeout(function() {
+                    safeRemoveClass(draggedElement, 'is-moved');
+                }, 600);
+            }, 100);
+            
+            isDragging = false;
+            draggedElement = null;
+        }
+
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+
+        function hideHelp() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        function askQuestion() {
+            // Finger animasyonunu durdur
+            stopIntroLoop();
+            
+            var draggableButtons = document.querySelectorAll(".draggable");
+            var combinedText = "";
+            
+            draggableButtons.forEach(function(button) {
+                combinedText += button.textContent;
+            });
+
+            var randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            
+            // Taşları kilitle ve birleştir
+            draggableButtons.forEach(function(button, index) {
+                button.classList.add('locked');
+                // Kartları ortaya doğru yaklaştır
+                if (index === 0) {
+                    button.style.transform = 'translateX(15px) scale(1.05)';
+                } else if (index === 1) {
+                    button.style.transform = 'translateX(0px) scale(1.05)';
+                } else if (index === 2) {
+                    button.style.transform = 'translateX(-15px) scale(1.05)';
+                }
+            });
+            
+            // Sadece soruyu göster (kelimeyi tekrar yazma)
+            document.getElementById('combinedWord').textContent = randomQuestion;
+            
+            document.getElementById('combinedWord').classList.add('bounce');
+            setTimeout(function() {
+                document.getElementById('combinedWord').classList.remove('bounce');
+            }, 600);
+        }
+
+        function resetGame() {
+            var draggableButtons = document.querySelectorAll(".draggable");
+            
+            draggableButtons.forEach(function(button) {
+                button.classList.remove('locked');
+                // Transform'ları sıfırla
+                button.style.transform = '';
+            });
+            
+            document.getElementById('combinedWord').textContent = 'kelimen hazırsa başlat 👍';
+        }
+
+        function loadNewWords() {
+            var shuffledWords = words.slice().sort(function() { return Math.random() - 0.5; });
+            
+            var draggableButtons = document.querySelectorAll(".draggable");
+            draggableButtons.forEach(function(button, index) {
+                button.style.transform = 'scale(0)';
+                setTimeout(function() {
+                    button.textContent = shuffledWords[index] || "KELİME";
+                    button.style.transform = 'scale(1)';
+                }, index * 100);
+            });
+            
+            setTimeout(function() {
+                document.getElementById('combinedWord').textContent = 'kelimen hazırsa başlat 👍';
+                resetGame();
+                
+                if (!hasUserDragged) {
+                    // Mevcut intro'yu durdur ve yeniden başlat
+                    stopIntroLoop();
+                    startIntroLoop();
+                }
+            }, 300);
+        }
+
+        function startIntroLoop() {
+            // İlk demonstrasyonu biraz gecikmeyle başlat
+            setTimeout(function() {
+                demonstrateShuffle();
+            }, 500);
+            
+            // 5 saniye aralıklarla tekrarla
+            introInterval = setInterval(function() {
+                if (!hasUserDragged) {
+                    demonstrateShuffle();
+                } else {
+                    stopIntroLoop();
+                }
+            }, 5000);
+        }
+
+        function stopIntroLoop() {
+            if (introInterval) {
+                clearInterval(introInterval);
+                introInterval = null;
+            }
+            
+            var finger = document.getElementById('fingerDemo');
+            if (finger) {
+                finger.style.opacity = '0';
+            }
+        }
+
+        function demonstrateShuffle() {
+            if (hasUserDragged) {
+                stopIntroLoop();
+                return;
+            }
+            
+            var allCards = Array.from(container.querySelectorAll('.draggable'));
+            var finger = document.getElementById('fingerDemo');
+            
+            var cardIndex = Math.random() < 0.5 ? 0 : 1;
+            var cardToMove = allCards[cardIndex];
+            var targetIndex = cardIndex === 0 ? 1 : 0;
+            
+            var cardRect = cardToMove.getBoundingClientRect();
+            var containerRect = container.getBoundingClientRect();
+            
+            finger.style.position = 'absolute';
+            finger.style.left = (cardRect.left - containerRect.left + cardRect.width / 2 - 25) + 'px';
+            finger.style.top = (cardRect.top - containerRect.top + cardRect.height + 10) + 'px';
+            finger.style.opacity = '1';
+            finger.style.zIndex = '1500';
+            
+            setTimeout(function() {
+                cardToMove.classList.add('is-moving');
+                
+                var targetCard = allCards[targetIndex];
+                var targetRect = targetCard.getBoundingClientRect();
+                
+                finger.style.left = (targetRect.left - containerRect.left + targetRect.width / 2 - 25) + 'px';
+                finger.style.transition = 'all 0.8s ease';
+            }, 500);
+            
+            setTimeout(function() {
+                cardToMove.classList.remove('is-moving');
+                
+                if (cardIndex === 0) {
+                    container.insertBefore(cardToMove, allCards[1].nextSibling);
+                } else {
+                    container.insertBefore(cardToMove, allCards[0]);
+                }
+                
+                cardToMove.classList.add('is-moved');
+                setTimeout(function() {
+                    cardToMove.classList.remove('is-moved');
+                }, 600);
+            }, 1300);
+            
+            setTimeout(function() {
+                finger.style.opacity = '0';
+                finger.style.transition = 'all 0.3s ease';
+            }, 2000);
+        }
+
+        document.getElementById('helpModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideHelp();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var initialX = 0;
+            var currentX = 0;
+            var lastMoveTime = 0;
+            
+            container.addEventListener('touchstart', function(e) {
+                if (e.target.classList.contains('draggable') && !e.target.classList.contains('locked')) {
+                    e.preventDefault();
+                    var touch = e.touches[0];
+                    startX = touch.clientX;
+                    startY = touch.clientY;
+                    initialX = touch.clientX;
+                    lastMoveTime = 0;
+                    
+                    if (!isDragging) {
+                        startDrag(e.target);
+                    }
+                }
+            }, { passive: false });
+
+            container.addEventListener('touchmove', function(e) {
+                if (!draggedElement || !isDragging) return;
+                e.preventDefault();
+                
+                var touch = e.touches[0];
+                currentX = touch.clientX;
+                var deltaX = currentX - initialX;
+                var now = Date.now();
+                
+                if (Math.abs(deltaX) > 55 && now - lastMoveTime > 200) {
+                    var allCards = Array.from(container.children);
+                    var draggedIndex = allCards.indexOf(draggedElement);
+                    
+                    if (deltaX > 55 && draggedIndex < allCards.length - 1) {
+                        var nextCard = allCards[draggedIndex + 1];
+                        container.insertBefore(draggedElement, nextCard.nextSibling);
+                        initialX = currentX;
+                        lastMoveTime = now;
+                    } else if (deltaX < -55 && draggedIndex > 0) {
+                        var prevCard = allCards[draggedIndex - 1];
+                        container.insertBefore(draggedElement, prevCard);
+                        initialX = currentX;
+                        lastMoveTime = now;
+                    }
+                }
+            }, { passive: false });
+
+            container.addEventListener('touchend', function(e) {
+                if (isDragging && draggedElement) {
+                    endDrag();
+                }
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>
