@@ -3,7 +3,7 @@
   "short_name": "Uydurca",
   "description": "Yaratıcı kelime oyunu! Kelimeleri birleştir, eğlenceli sorulara yanıt ver.",
   "start_url": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#87CEEB",
   "theme_color": "#4A90E2",
