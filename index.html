@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4A90E2">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uydurca - Kelime Oyunu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Mitr:wght@600&family=Nunito:wght@900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,9 +13,10 @@
         }
 
         body {
-            background-color: #DBF2FD;
-            color: #255193;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #6DC8FF;
+            color:  #2A51C6;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 600;
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -25,320 +24,524 @@
             align-items: center;
             justify-content: center;
             overflow-x: hidden;
+          -webkit-text-stroke-width: 1px;
         }
 
         .container {
             max-width: 600px;
             width: 100%;
             text-align: center;
-        }
-
-        .help-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #255193 !important;
-            color: #FFFFFF !important;
-            border: none !important;
-            border-radius: 50% !important;
-            width: 50px !important;
-            height: 50px !important;
-            font-size: 1.5rem !important;
-            cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
-            z-index: 1000 !important;
-        }
-
-        .help-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(37, 81, 147, 0.4);
-        }
-
-        .help-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-        }
-
-        .help-content {
-            background: #FFFFFF;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 550px;
-            width: 90%;
-            color: #255193;
-        }
-
-        .help-content h3 {
-            margin-bottom: 20px;
-            color: #255193;
-        }
-
-        .help-content p {
-            margin-bottom: 15px;
-            line-height: 1.6;
-            text-align: left;
-        }
-
-        .example {
-            color: #666;
-            font-style: italic;
-            margin-left: 10px;
-        }
-
-        .credits {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #DBF2FD;
-            text-align: center;
-        }
-
-        .credits p {
-            margin-bottom: 10px;
-        }
-
-        .credits a {
-            color: #255193;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .close-btn {
-            background: #255193 !important;
-            color: #FFFFFF !important;
-            border: none !important;
-            padding: 10px 20px !important;
-            border-radius: 8px !important;
-            cursor: pointer !important;
-            margin: 20px auto 0 auto !important;
-            display: block !important;
+            min-height: 70vh;
         }
 
         .word-container {
+            position: relative;
             display: flex;
             justify-content: center;
-            gap: 18px;
-            margin: 60px 0 40px 0;
+            gap: 10px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             padding: 15px 5px;
-            position: relative;
+            height: 130px;
         }
 
         .draggable {
-            height: 90px;
-            width: 90px;
-            background-color: #FFFFFF !important;
-            color: #255193 !important;
-            border: 2px solid #255193 !important;
-            border-radius: 12px !important;
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            background-color: #ECF7F7 !important;
+            color:  #2A51C6 !important;
+            border: none !important;
+            border-radius: 18px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-weight: bold !important;
-            font-size: 1.1rem !important;
+            font-family: 'Comfortaa', cursive !important;
+            font-weight: 700 !important;
+            font-size: 1.7rem !important;
             cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), top 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
             user-select: none;
             touch-action: none;
-            position: relative;
+            top: 15px;
+        }
+
+        .draggable[selected*='yes'] {
+            transition: none !important;
         }
 
         .draggable:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 81, 147, 0.4);
-            border-color: #255193;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                inset 2px 2px 6px rgba(236, 247, 247, 0.8),
+                0px 5px 15px rgba(0, 0, 0, 0.25);
         }
 
         .draggable.is-moving {
-            transform: scale(1.3) translateY(-30px) rotate(5deg) !important;
-            background: #255193 !important;
-            color: #FFF !important;
-            box-shadow: 0 15px 40px rgba(37, 81, 147, 0.5) !important;
+            transform: scale(1.15) translateY(-20px) rotate(2deg) !important;
+            background: #2A51C6 !important;
+            color: #FFFFFF !important;
+            box-shadow: 
+                inset 2px 2px 6px rgba(236, 247, 247, 0.3),
+                0px 10px 30px rgba(42, 130, 198, 0.4) !important;
             z-index: 1000 !important;
-            transition: all 0.2s ease !important;
         }
 
         .draggable.is-moved {
-            background: #255193 !important;
-            color: #FFF !important;
+            background: #2A51C6 !important;
+            color: #FFFFFF !important;
             transform: scale(1.05) !important;
-        }
-
-        .draggable.gu-transit {
-            opacity: 0.9 !important;
-        }
-
-        .word-container.drag-active .draggable:not(.is-moving) {
-            transition: all 0.3s ease;
+            box-shadow: 
+                inset 2px 2px 6px rgba(236, 247, 247, 0.3),
+                0px 0px 5px rgba(0, 0, 0, 0.2) !important;
         }
 
         .draggable.locked {
-            background-color: #255193 !important;
+            background-color:  #2A51C6 !important;
             color: #FFFFFF !important;
             cursor: default !important;
-            border: 2px solid #255193 !important;
             transform: scale(1.05) !important;
+            box-shadow: 
+                inset 2px 2px 6px rgba(236, 247, 247, 0.2),
+                0px 0px 5px rgba(0, 0, 0, 0.3) !important;
         }
 
         .draggable.locked:hover {
             transform: scale(1.05) !important;
-            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
         }
 
-        .finger-demo {
-            position: absolute;
-            font-size: 3rem;
-            z-index: 1500;
-            pointer-events: none;
+        .question-text {
+            font-family: 'Comfortaa', cursive !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color:  #ECF7F7;
+            margin-bottom: 10px;
+            min-height: 100px;
+            display: flex;
+            align-items: start;
+            justify-content: center;
+            text-align: center;
             opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .question-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .game-btn {
+            background: #2A51C6 !important;
+            border: none !important;
+            border-radius: 50% !important;
+            width: 70px !important;
+            height: 70px !important;
+            cursor: pointer !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 
+                inset 3px 3px 6px rgba(236, 247, 247, 0.3), inset -3px -3px 5px rgba(0, 0, 0, 0.2) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1.8rem !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                inset 3px 3px 6px rgba(236, 247, 247, 0.3), inset -3px -3px 5px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .game-btn:active {
+            transform: scale(0.95);
+        }
+
+        .game-btn svg {
+            width: 40px;
+            height: 35px;
             transition: all 0.3s ease;
         }
 
-        .combined-word {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #255193;
-            margin: 30px 0 20px 0;
-            min-height: 40px;
+        .game-btn svg .cls-1,
+        .game-btn svg .cls-2,
+        .game-btn svg .cls-3 {
+            fill: #FFFFFF !important;
         }
 
-        .dice-btn {
-            background: #255193 !important;
-            color: #FFFFFF !important;
-            border: none !important;
-            border-radius: 50% !important;
-            width: 60px !important;
-            height: 60px !important;
-            font-size: 1.5rem !important;
-            cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            margin: 20px !important;
-            box-shadow: 0 4px 15px rgba(37, 81, 147, 0.3) !important;
+        .game-btn.pulse {
+            animation: pulse 1.5s infinite;
         }
 
-        .dice-btn:hover {
-            transform: scale(1.1) rotate(180deg);
-            box-shadow: 0 6px 20px rgba(37, 81, 147, 0.4);
+        @keyframes pulse {
+            0% {
+                box-shadow: 
+                    inset 2px 2px 6px rgba(236, 247, 247, 0.3),
+                    0px 0px 5px rgba(0, 0, 0, 0.2),
+                    0px 0px 0px 0px rgba(42, 130, 198, 0.4);
+            }
+            50% {
+                box-shadow: 
+                    inset 2px 2px 6px rgba(236, 247, 247, 0.3),
+                    0px 0px 5px rgba(0, 0, 0, 0.2),
+                    0px 0px 0px 15px rgba(42, 130, 198, 0);
+            }
+            100% {
+                box-shadow: 
+                    inset 2px 2px 6px rgba(236, 247, 247, 0.3),
+                    0px 0px 5px rgba(0, 0, 0, 0.2),
+                    0px 0px 0px 0px rgba(42, 130, 198, 0);
+            }
         }
 
-        .game-state {
-            margin: 20px 0;
+        @keyframes smoothSlide {
+            from {
+                transform: translateX(var(--start-pos));
+            }
+            to {
+                transform: translateX(var(--end-pos));
+            }
+        }
+
+        .slide-transition {
+            animation: smoothSlide 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @media (max-width: 768px) {
             .draggable {
-                width: 80px;
-                height: 80px;
                 font-size: 1rem;
             }
             
-            .combined-word {
-                font-size: 1.6rem;
+            .question-text {
+                font-size: 1.3rem;
             }
             
-            .help-content {
-                padding: 20px;
+            .game-btn {
+                width: 80px !important;
+                height: 80px !important;
+                font-size: 1.5rem !important;
+            }
+            
+            .game-btn svg {
+                width: 40px;
+                height: 35px;
             }
             
             .word-container {
-                gap: 15px;
-                padding: 10px 5px;
-                margin: 40px 0 30px 0;
+                gap: 9px;
+                margin-bottom: 10px;
             }
         }
 
-        @media (max-width: 320px) {
+        @media (max-width: 480px) {
             .draggable {
-                width: 75px;
-                height: 75px;
                 font-size: 0.9rem;
             }
+            
+            .question-text {
+                font-size: 1.3rem;
+                padding: 0;
+            }
+            
+            .game-controls {
+                gap: 20px;
+            }
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes wordAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.5) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
-        .bounce {
-            animation: bounce 0.6s ease;
+        .word-appear {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            opacity: 1 !important;
+            transform: scale(1) translateY(0) !important;
         }
     </style>
 </head>
 <body>
-    <button class="help-btn" onclick="showHelp()">🤔</button>
-    
-    <div class="help-modal" id="helpModal">
-        <div class="help-content">
-            <h3>🎮 Nasıl Oynanır?</h3>
-            <p><strong>1. Adım:</strong> Kelimeleri sürükleyerek yerlerini değiştir.<br>
-            <span class="example">Örneğin: KUM + DÜŞ + DIL = KUMDÜŞDIL</span></p>
-            <p><strong>2. Adım:</strong> soru sormak 👍 için butonuna tıkla</p>
-            <p><strong>3. Adım:</strong> Çıkan soruyu yanıtla!<br>
-            <span class="example">Örneğin: "KUMDÜŞDIL filminin konusu nedir?" sorusunu yaratıcılıkla yanıtla! Taşlar kilitlenir ve artık sadece okunabilir.</span></p>
-            
-            <div class="credits">
-                <p>🎨 <strong>yunusemre</strong> | <a href="https://www.instagram.com/yemredemirci" target="_blank">instagram</a></p>
-                <p>👨‍💻 <strong>ahmetcagatay</strong> | <a href="https://www.github.com/ahmetcagatay" target="_blank">github</a></p>
-            </div>
-            
-            <button class="close-btn" onclick="hideHelp()">Anladım!</button>
-        </div>
-    </div>
-
     <div class="container">
-        <div class="word-container" id="wordContainer">
-            <div class="draggable">UY</div>
-            <div class="draggable">DUR</div>
-            <div class="draggable">CA</div>
-            <div class="finger-demo" id="fingerDemo">👆</div>
+        <div class="word-container" id="wordContainer" style="width: 320px;">
+            <div class="draggable">uy</div>
+            <div class="draggable">dur</div>
+            <div class="draggable">ca</div>
         </div>
 
-        <div class="game-state">
-            <div class="combined-word" id="combinedWord">önce zar atmalısın</div>
-            <button class="dice-btn" onclick="loadNewWords()" title="Yeni kelimeler">🎲</button>
-            <button class="dice-btn" onclick="askQuestion()" title="Soru sor">👍</button>
+        <div class="question-text" id="questionText"></div>
+
+        <div class="game-controls">
+            <button class="game-btn pulse" id="diceBtn" onclick="loadNewWords()" title="Yeni kelimeler">
+               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="108.111" height="85.533" viewBox="0 0 108.111 85.533">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #FFFFFF;
+      }
+
+      .cls-2 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-3 {
+        fill: #FFFFFF;
+      }
+
+      .cls-4 {
+        filter: url(#Path_4-2);
+      }
+
+      .cls-5 {
+        filter: url(#Path_4);
+      }
+
+      .cls-6 {
+        filter: url(#Rectangle_3);
+      }
+    </style>
+    <filter id="Rectangle_3" x="-9" y="-6" width="126.111" height="103.533" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clip-path">
+      <g class="cls-6" transform="matrix(1, 0, 0, 1, 0, 0)">
+        <rect id="Rectangle_3-2" data-name="Rectangle 3" class="cls-1" width="108.111" height="85.533" transform="translate(0 0)"/>
+      </g>
+    </clipPath>
+    <filter id="Path_4" x="-8.999" y="-6.001" width="126.111" height="103.533" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur-2"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_4-2" x="-8.999" y="-6.001" width="126.111" height="103.533" filterUnits="userSpaceOnUse">
+      <feOffset dx="-1" dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="0.5" result="blur-3"/>
+      <feFlood flood-color="#989898" flood-opacity="0.89" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-3"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="pul_simge" transform="translate(0 0)">
+    <g id="Group_4" data-name="Group 4" transform="translate(0 0)">
+      <g id="Group_2" data-name="Group 2" class="cls-2">
+        <g data-type="innerShadowGroup">
+          <g class="cls-5" transform="matrix(1, 0, 0, 1, 0, 0)">
+            <path id="Path_4-3" data-name="Path 4" class="cls-1" d="M106.8,40.553,91.943,8.283a14.23,14.23,0,0,0-18.89-6.97l-31.74,14.62-9.83-3.63a14.255,14.255,0,0,0-18.29,8.42L.883,54.053A14.248,14.248,0,0,0,9.3,72.333l33.33,12.31a14.162,14.162,0,0,0,10.89-.42,14.158,14.158,0,0,0,7.4-8l.23-.63a3.7,3.7,0,0,0,.47.02,14.111,14.111,0,0,0,5.94-1.31l32.27-14.86a14.251,14.251,0,0,0,6.97-18.89m-50.43,21.98-1.98,5.37-1.69,4.57-.23.63a5.239,5.239,0,0,1-6.72,3.1l-33.33-12.31a5.246,5.246,0,0,1-3.1-6.73l12.31-33.32a5.246,5.246,0,0,1,6.73-3.1l5.61,2.07,4.26,1.57,4.31,1.6,19.15,7.07a5.223,5.223,0,0,1,3.09,6.72Zm39.69-11.27-31.24,14.4,8.4-22.77a14.216,14.216,0,0,0-8.42-18.28l-11.55-4.27,23.57-10.86a5.256,5.256,0,0,1,6.95,2.57l14.86,32.27a5.227,5.227,0,0,1-2.57,6.94" transform="translate(0 0)"/>
+          </g>
+          <g class="cls-4" transform="matrix(1, 0, 0, 1, 0, 0)">
+            <path id="Path_4-4" data-name="Path 4" class="cls-3" d="M106.8,40.553,91.943,8.283a14.23,14.23,0,0,0-18.89-6.97l-31.74,14.62-9.83-3.63a14.255,14.255,0,0,0-18.29,8.42L.883,54.053A14.248,14.248,0,0,0,9.3,72.333l33.33,12.31a14.162,14.162,0,0,0,10.89-.42,14.158,14.158,0,0,0,7.4-8l.23-.63a3.7,3.7,0,0,0,.47.02,14.111,14.111,0,0,0,5.94-1.31l32.27-14.86a14.251,14.251,0,0,0,6.97-18.89m-50.43,21.98-1.98,5.37-1.69,4.57-.23.63a5.239,5.239,0,0,1-6.72,3.1l-33.33-12.31a5.246,5.246,0,0,1-3.1-6.73l12.31-33.32a5.246,5.246,0,0,1,6.73-3.1l5.61,2.07,4.26,1.57,4.31,1.6,19.15,7.07a5.223,5.223,0,0,1,3.09,6.72Zm39.69-11.27-31.24,14.4,8.4-22.77a14.216,14.216,0,0,0-8.42-18.28l-11.55-4.27,23.57-10.86a5.256,5.256,0,0,1,6.95,2.57l14.86,32.27a5.227,5.227,0,0,1-2.57,6.94" transform="translate(0 0)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+
+            </button>
+
+            <button class="game-btn" id="questionBtn" onclick="askQuestion()" title="Soru sor">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="114.281" height="95.101" viewBox="0 0 114.281 95.101">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #FFFFFF;
+      }
+
+      .cls-2 {
+        fill: #FFFFFF;
+      }
+
+      .cls-3 {
+        filter: url(#Path_3-2);
+      }
+
+      .cls-4 {
+        filter: url(#Path_3);
+      }
+
+      .cls-5 {
+        filter: url(#Path_2-2);
+      }
+
+      .cls-6 {
+        filter: url(#Path_2);
+      }
+
+      .cls-7 {
+        filter: url(#Path_1-2);
+      }
+
+      .cls-8 {
+        filter: url(#Path_1);
+      }
+    </style>
+    <filter id="Path_1" x="0" y="0" width="114.281" height="95.101" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_1-2" x="0" y="0" width="114.281" height="95.101" filterUnits="userSpaceOnUse">
+      <feOffset dx="-1" dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="0.5" result="blur-2"/>
+      <feFlood flood-color="#989898" flood-opacity="0.89" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-2"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="Path_2" x="43.871" y="45.997" width="26.634" height="26.633" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur-3"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-3"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_2-2" x="43.871" y="45.997" width="26.634" height="26.633" filterUnits="userSpaceOnUse">
+      <feOffset dx="-1" dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="0.5" result="blur-4"/>
+      <feFlood flood-color="#989898" flood-opacity="0.89" result="color-2"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-4"/>
+      <feComposite operator="in" in="color-2"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="Path_3" x="35.902" y="13.103" width="42.476" height="49.207" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur-5"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-5"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_3-2" x="35.902" y="13.103" width="42.476" height="49.207" filterUnits="userSpaceOnUse">
+      <feOffset dx="-1" dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="0.5" result="blur-6"/>
+      <feFlood flood-color="#989898" flood-opacity="0.89" result="color-3"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-6"/>
+      <feComposite operator="in" in="color-3"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="soru_simge" transform="translate(9 6)">
+    <g data-type="innerShadowGroup">
+      <g class="cls-8" transform="matrix(1, 0, 0, 1, -9, -6)">
+        <path id="Path_1-3" data-name="Path 1" class="cls-1" d="M96.247,31.017c-.505-9.854-5.618-17.928-14.788-23.351-18.431-10.9-47.979-8.744-61.05-2.4C8.6,10.994,1.205,20.433.129,31.161c-.965,9.617,3.513,19,12.291,25.758C13.3,57.935,13.943,62.191,6.9,70.5a4,4,0,0,0,2.822,6.581c.1,0,.457.023,1.034.023,3.894,0,17.6-.826,25.69-11.924C54.808,68.273,73.809,64,85.486,54.011c7.375-6.311,11.2-14.477,10.761-22.994M12.518,57.005a.206.206,0,0,1,.042.023.966.966,0,0,1-.112-.087c.038.029.075.057.112.087l.011.008c.135.1-.062-.031-.053-.031m67.767-9.072c-10.438,8.931-28.067,12.422-44.908,8.9a4,4,0,0,0-4.283,1.915c-3.157,5.467-8.342,8.054-12.76,9.274,2.029-3.808,2.882-7.326,2.541-10.519a9.9,9.9,0,0,0-3.443-6.824l-.009-.008C10.707,45.552,7.392,38.906,8.089,31.959c.792-7.9,6.555-15.007,15.812-19.5,5.42-2.629,14.773-4.413,24.736-4.413,10.116,0,20.861,1.84,28.751,6.506,6.846,4.049,10.5,9.726,10.869,16.872.392,7.669-4.118,13.21-7.972,16.508" transform="translate(9 6)"/>
+      </g>
+      <g class="cls-7" transform="matrix(1, 0, 0, 1, -9, -6)">
+        <path id="Path_1-4" data-name="Path 1" class="cls-2" d="M96.247,31.017c-.505-9.854-5.618-17.928-14.788-23.351-18.431-10.9-47.979-8.744-61.05-2.4C8.6,10.994,1.205,20.433.129,31.161c-.965,9.617,3.513,19,12.291,25.758C13.3,57.935,13.943,62.191,6.9,70.5a4,4,0,0,0,2.822,6.581c.1,0,.457.023,1.034.023,3.894,0,17.6-.826,25.69-11.924C54.808,68.273,73.809,64,85.486,54.011c7.375-6.311,11.2-14.477,10.761-22.994M12.518,57.005a.206.206,0,0,1,.042.023.966.966,0,0,1-.112-.087c.038.029.075.057.112.087l.011.008c.135.1-.062-.031-.053-.031m67.767-9.072c-10.438,8.931-28.067,12.422-44.908,8.9a4,4,0,0,0-4.283,1.915c-3.157,5.467-8.342,8.054-12.76,9.274,2.029-3.808,2.882-7.326,2.541-10.519a9.9,9.9,0,0,0-3.443-6.824l-.009-.008C10.707,45.552,7.392,38.906,8.089,31.959c.792-7.9,6.555-15.007,15.812-19.5,5.42-2.629,14.773-4.413,24.736-4.413,10.116,0,20.861,1.84,28.751,6.506,6.846,4.049,10.5,9.726,10.869,16.872.392,7.669-4.118,13.21-7.972,16.508" transform="translate(9 6)"/>
+      </g>
+    </g>
+    <g data-type="innerShadowGroup">
+      <g class="cls-6" transform="matrix(1, 0, 0, 1, -9, -6)">
+        <path id="Path_2-3" data-name="Path 2" class="cls-1" d="M48.164,46a4.141,4.141,0,0,0-3.021,1.271,4.2,4.2,0,0,0-1.272,3.069,4.344,4.344,0,0,0,4.293,4.293,4.2,4.2,0,0,0,3.069-1.272,4.143,4.143,0,0,0,1.272-3.021A4.341,4.341,0,0,0,48.164,46" transform="translate(9 6)"/>
+      </g>
+      <g class="cls-5" transform="matrix(1, 0, 0, 1, -9, -6)">
+        <path id="Path_2-4" data-name="Path 2" class="cls-2" d="M48.164,46a4.141,4.141,0,0,0-3.021,1.271,4.2,4.2,0,0,0-1.272,3.069,4.344,4.344,0,0,0,4.293,4.293,4.2,4.2,0,0,0,3.069-1.272,4.143,4.143,0,0,0,1.272-3.021A4.341,4.341,0,0,0,48.164,46" transform="translate(9 6)"/>
+      </g>
+    </g>
+    <g data-type="innerShadowGroup">
+      <g class="cls-4" transform="matrix(1, 0, 0, 1, -9, -6)">
+        <path id="Path_3-3" data-name="Path 3" class="cls-1" d="M54.632,14.539A12.379,12.379,0,0,0,48.641,13.1a13.672,13.672,0,0,0-6.662,1.581,11.449,11.449,0,0,0-4.488,4.361A12.589,12.589,0,0,0,35.9,25.414a3.374,3.374,0,0,0,.985,2.449,3.564,3.564,0,0,0,4.932-.012,3.382,3.382,0,0,0,.951-2.437,7.193,7.193,0,0,1,.638-3.143,4.385,4.385,0,0,1,1.858-1.951,6.879,6.879,0,0,1,3.375-.729,4.946,4.946,0,0,1,2.684.677,4.755,4.755,0,0,1,1.685,1.8,4.947,4.947,0,0,1,.6,2.39,7.325,7.325,0,0,1-.595,3.127,8.289,8.289,0,0,1-1.618,2.3c-.721.719-1.529,1.465-2.4,2.214a11.812,11.812,0,0,0-3.227,4.3,11.443,11.443,0,0,0-1.035,4.477,3.365,3.365,0,0,0,3.433,3.434,3.317,3.317,0,0,0,2.485-1,3.381,3.381,0,0,0,.949-2.436,8.69,8.69,0,0,1,.435-2.316,4.136,4.136,0,0,1,1.385-2.106A35.336,35.336,0,0,0,56.9,33.287a13.138,13.138,0,0,0,2.532-3.8,12.5,12.5,0,0,0,.942-5.031,11.257,11.257,0,0,0-1.554-5.937,11.007,11.007,0,0,0-4.192-3.983" transform="translate(9 6)"/>
+      </g>
+      <g class="cls-3" transform="matrix(1, 0, 0, 1, -9, -6)">
+        <path id="Path_3-4" data-name="Path 3" class="cls-2" d="M54.632,14.539A12.379,12.379,0,0,0,48.641,13.1a13.672,13.672,0,0,0-6.662,1.581,11.449,11.449,0,0,0-4.488,4.361A12.589,12.589,0,0,0,35.9,25.414a3.374,3.374,0,0,0,.985,2.449,3.564,3.564,0,0,0,4.932-.012,3.382,3.382,0,0,0,.951-2.437,7.193,7.193,0,0,1,.638-3.143,4.385,4.385,0,0,1,1.858-1.951,6.879,6.879,0,0,1,3.375-.729,4.946,4.946,0,0,1,2.684.677,4.755,4.755,0,0,1,1.685,1.8,4.947,4.947,0,0,1,.6,2.39,7.325,7.325,0,0,1-.595,3.127,8.289,8.289,0,0,1-1.618,2.3c-.721.719-1.529,1.465-2.4,2.214a11.812,11.812,0,0,0-3.227,4.3,11.443,11.443,0,0,0-1.035,4.477,3.365,3.365,0,0,0,3.433,3.434,3.317,3.317,0,0,0,2.485-1,3.381,3.381,0,0,0,.949-2.436,8.69,8.69,0,0,1,.435-2.316,4.136,4.136,0,0,1,1.385-2.106A35.336,35.336,0,0,0,56.9,33.287a13.138,13.138,0,0,0,2.532-3.8,12.5,12.5,0,0,0,.942-5.031,11.257,11.257,0,0,0-1.554-5.937,11.007,11.007,0,0,0-4.192-3.983" transform="translate(9 6)"/>
+      </g>
+    </g>
+  </g>
+</svg>
+
+            </button>
         </div>
     </div>
 
     <script>
-        var draggedElement = null;
-        var isDragging = false;
-        var startX = 0;
-        var startY = 0;
-        var initialIndex = 0;
-        var hasUserDragged = false;
-        var introInterval = null;
+        var gameState = 'initial'; // 'initial', 'ready', 'question'
 
-        var words = [
-            "KUM", "DÜŞ", "DİL", "TUR", "TEK", "TAŞ", "ŞOK", "BAŞ", "EL", "MUM", 
-            "TUŞ", "BAL", "AŞK", "BİR", "BOŞ", "CAM", "CAN", "CEP", "ÇOK", "DEM", 
-            "FİL", "FON", "GÖK", "GÖL", "GÖZ", "GÜL", "GÜÇ", "GÜN", "HAN", "HAS", 
-            "HUY", "İZ", "KAR", "KAT", "KIL", "KÖY", "NEM", "ON", "PAY", "PER", 
-            "POZ", "RET", "SOL", "SES", "SİS", "SIK", "SON", "SÜS", "ŞEY", "TAT", 
-            "TEL", "TON", "TUZ", "VAR", "YER", "YAŞ", "YIL", "YOL", "ZAN", "ZEN"
+        // Dice sound - Base64 audio data
+        var diceSound = new Audio('paste here base64');
+        diceSound.volume = 0.3; // Set volume to 30%
+
+        function playDiceSound() {
+            try {
+                diceSound.currentTime = 0; // Reset to beginning
+                diceSound.play();
+            } catch (e) {
+                // Silently handle any audio errors
+                console.log('Audio playback not available');
+            }
+        }
+
+        var syllables = [
+            "ak", "al", "aşk", "at", "ay", "az", "bal", "baş", "bel", "ben", "bin", "bir", "biz", "bol", "boş", "bu", 
+            "bul", "buz", "cam", "can", "caz", "cep", "çay", "çek", "çip", "çok", "çöp", "dağ", "dar", "dem", "dik", 
+            "dil", "dip", "diş", "diz", "dur", "düş", "düz", "el", "eş", "fil", "fiş", "fok", "fon", "gaz", "gök", 
+            "göl", "göz", "güç", "gül", "gün", "hak", "han", "hap", "has", "hep", "hop", "hoş", "iş", "iz", "kaç", 
+            "kar", "kat", "kek", "kır", "kış", "kız", "kil", "kim", "kir", "koz", "köy", "köz", "kum", "kur", "kuş", 
+            "leş", "loş", "maç", "mal", "mum", "naz", "ne", "nur", "o", "on", "ön", "öz", "pay", "pek", "pop", "poz", 
+            "pul", "rap", "saç", "sap", "saz", "sen", "ses", "sev", "sık", "sis", "siz", "sol", "son", "söz", "su", 
+            "süs", "şap", "şey", "şık", "şıp", "şok", "şu", "taç", "taş", "tek", "tel", "tez", "tık", "tik", "tip", 
+            "tok", "ton", "top", "toz", "tur", "tuş", "tuz", "uç", "üst", "var", "ver", "vur", "yağ", "yan", "yar", 
+            "yaş", "yaz", "yıl", "yok", "yol", "yüz", "zan", "zar", "zen", "ilk", "şut", "ek", "not"
         ];
 
         var questions = [
-            "filminin konusu nedir?", "nasıl bir hastalık?", "nasıl bir spor?", "nasıl bir yemek?",
-            "mesleği ne yapar?", "karakterinin süper gücü ne?", "nasıl bir yer?",
-            "bilim dalı hangi konularda araştırma yapar?", "şarkısının hikayesi nedir?",
-            "oyunu nasıl oynanır, kuralları nelerdir?", "TV programının içeriği nasıldır?",
-            "akımı hangi düşünceyi savunur?", "nasıl bir dans?", "olayında neler yaşandı?",
-            "nasıl bir tik?", "mobil uygulaması ne işe yarar?", "bayramı nasıl kutlanır?",
-            "masalı bize ne anlatıyor?", "büyüsü nasıl yapılır?", "ödülünü kim nasıl kazandı?"
+            "filminin konusu nedir?", "nasıl bir hastalık?", "nasıl bir spor?", "yemeğinin tarifini yap", 
+            "mesleği ne yapar?", "karakterinin süper gücü ne?", "nasıl bir yer?", 
+            "bilim dalı hangi konularda araştırma yapar?", "şarkısının hikayesi nedir?", 
+            "oyunu nasıl oynanır, kuralları nelerdir?", "TV programının içeriği nasıldır?", 
+            "akımı hangi düşünceyi savunur?", "nasıl bir dans?", "olayında neler yaşandı?", 
+            "nasıl bir tik?", "mobil uygulaması ne işe yarar?", "bayramı nasıl kutlanır?", 
+            "masalı bize ne anlatıyor?", "büyüsü nasıl yapılır?", "ödülünü kim nasıl kazandı?", 
+            "eserini gördüğünde neler hissettin?", "bölgesinde yaşam koşulları nasıldır?", 
+            "toplantısında hangi kararlar alındı?", "davası nasıl sonuçlandı?", "olmak isteyenlere bir tavsiye ver?", 
+            "burcunun özellikleri nelerdir?", "seni neden korkutuyor?", "nasıl bir duygu?", 
+            "nasıl bir canlı türü?", "nasıl bir hobi?", "nasıl bir kültür?", "nasıl bir tecrübe?", 
+            "lakabı kimler için kullanılır?", "ritüeli nasıl yapılır?", "deneyi nasıl sonuçlandı?", 
+            "partisi nasıl kutlanır?", "savaşı nasıl çıktı?", "deyimi hangi durumlarda kullanılır?", 
+            "falına nasıl bakılır?", "isyanında neler yaşandı?", "ürünü/eşyası ne işe yarıyor?", 
+            "kokusu nasıl elde edilir?", "enstrümanı nasıl yapılır?", "nasıl bir mitolojik karakter?", 
+            "icadı nasıl ortaya çıktı?", "eğitiminin içeriğinde neler var?", "girişimini neden destekliyorsun?", 
+            "skandalı nasıl yaşandı?", "gizemi nasıl aydınlandı?", "nasıl bir his?"
         ];
 
         var container = document.getElementById('wordContainer');
+        var questionText = document.getElementById('questionText');
+        var diceBtn = document.getElementById('diceBtn');
+        var questionBtn = document.getElementById('questionBtn');
+
+        // Horizontal Drag System Variables
+        let pos = {x: null, y: null};
+        let diff = {x: null, y: null};
+        let mouseDown = false;
+        let selectedItem = null;
+        let resetTransition = false;
+        let transitionTime = 400;
 
         function safeAddClass(element, className) {
             if (element && element.classList) {
@@ -352,83 +555,236 @@
             }
         }
 
-        function getElementIndex(element) {
-            return Array.from(container.children).indexOf(element);
-        }
-
-        function moveElementToIndex(element, newIndex) {
-            var children = Array.from(container.children);
-            if (newIndex >= children.length) {
-                container.appendChild(element);
-            } else {
-                container.insertBefore(element, children[newIndex]);
+        function updateGameState(newState) {
+            gameState = newState;
+            
+            switch(newState) {
+                case 'initial':
+                    diceBtn.classList.add('pulse');
+                    questionBtn.classList.remove('pulse');
+                    break;
+                case 'ready':
+                    diceBtn.classList.remove('pulse');
+                    questionBtn.classList.add('pulse');
+                    break;
+                case 'question':
+                    diceBtn.classList.remove('pulse');
+                    questionBtn.classList.remove('pulse');
+                    break;
             }
         }
 
-        function startDrag(element) {
-            if (!element) return;
+        function positionItems(insertIndex = null){
+            let itemsList = document.querySelectorAll('.word-container .draggable'); 
+            itemsList = Array.prototype.slice.call(itemsList); 
+            itemsList = itemsList.filter(item => item.getAttribute('selected') !== 'yes');
             
-            if (!hasUserDragged) {
-                hasUserDragged = true;
-                stopIntroLoop();
-            }
+            const containerWidth = 320; // Fixed container width
+            const itemWidth = 110; // Item width including gap
+            const totalItemsWidth = itemsList.length * itemWidth - 10; // Remove last gap
+            const startX = (containerWidth - totalItemsWidth) / 2; // Center calculation
             
-            draggedElement = element;
-            isDragging = true;
-            initialIndex = getElementIndex(element);
-            
-            safeAddClass(element, 'is-moving');
-            safeAddClass(element, 'gu-transit');
-            safeAddClass(container, 'drag-active');
-            
-            var allCards = Array.from(container.children);
-            allCards.forEach(function(card, index) {
-                if (card !== element) {
-                    if (index === 0) {
-                        card.style.transform = 'translateX(-20px)';
-                    } else if (index === 1) {
-                        card.style.transform = 'translateX(0px)';
-                    } else if (index === 2) {
-                        card.style.transform = 'translateX(20px)';
-                    }
+            let indexCounter = 0;
+            itemsList.forEach(function(item){
+                if(insertIndex === indexCounter + 1){
+                    indexCounter++;
                 }
+                item.style.left = startX + (itemWidth * indexCounter) + 'px';
+                item.setAttribute('order', indexCounter + 1);
+                indexCounter++;
             });
         }
 
-        function endDrag() {
-            if (!draggedElement) return;
-            
-            safeRemoveClass(draggedElement, 'is-moving');
-            safeRemoveClass(draggedElement, 'gu-transit');
-            safeRemoveClass(container, 'drag-active');
-            
-            var allCards = Array.from(container.children);
-            allCards.forEach(function(card) {
-                card.style.transform = '';
+        function positionItemsInOrder(){
+            let itemsList = document.querySelectorAll('.word-container .draggable'); 
+            itemsList = Array.prototype.slice.call(itemsList); 
+            itemsList = itemsList.sort(function(a, b){
+                return Number(a.getAttribute('order')) > Number(b.getAttribute('order')) ? 1 : -1;
             });
             
-            setTimeout(function() {
-                safeAddClass(draggedElement, 'is-moved');
-                setTimeout(function() {
-                    safeRemoveClass(draggedElement, 'is-moved');
-                }, 600);
-            }, 100);
+            const containerWidth = 320; // Fixed container width
+            const itemWidth = 110; // Item width including gap
+            const totalItemsWidth = itemsList.length * itemWidth - 10; // Remove last gap
+            const startX = (containerWidth - totalItemsWidth) / 2; // Center calculation
             
-            isDragging = false;
-            draggedElement = null;
+            itemsList.forEach(function(item, index){
+                if(item.getAttribute('selected') === 'yes'){
+                    item.removeAttribute('selected');
+                    item.style.top = '15px';
+                    setTimeout(function(){
+                        item.style.zIndex = '0';
+                    }, transitionTime);
+                };
+                item.style.left = startX + (itemWidth * index) + 'px';
+                item.setAttribute('order', index + 1);
+            });
+            resetTransition = true;
+            setTimeout(function(){
+                while(container.firstChild){
+                    container.removeChild(container.lastChild);
+                };
+                itemsList.forEach(function(item){
+                    container.append(item);
+                });
+                resetTransition = false;
+                if (gameState === 'initial') {
+                    updateGameState('ready');
+                }
+            }, transitionTime);
         }
 
-        function showHelp() {
-            document.getElementById('helpModal').style.display = 'flex';
-        }
+        function initializeDragSystem() {
+            // Removed: const numOfItems = document.querySelectorAll('.word-container .draggable').length;
+            // Removed: container.style.width = (numOfItems * 110) + (numOfItems * 10) + 'px';
+            positionItems();
 
-        function hideHelp() {
-            document.getElementById('helpModal').style.display = 'none';
+            document.querySelectorAll('.word-container .draggable').forEach(function(item, index){
+                // Mouse events
+                item.addEventListener('mousedown', function(e){
+                    e.preventDefault();
+                    if(!pos.x || resetTransition || item.classList.contains('locked')) return;
+                    mouseDown = true;
+                    selectedItem = item;
+                    diff.y = pos.y - item.offsetTop;
+                    diff.x = pos.x - item.offsetLeft;
+                    let offsetY = pos.y - diff.y;
+                    let offsetX = pos.x - diff.x;
+                    item.style.top = offsetY + 'px';
+                    item.style.left = offsetX  + 'px';
+                    item.style.zIndex = '1000';
+                    item.setAttribute('selected', 'yes');
+                    safeAddClass(item, 'is-moving');
+                });
+                
+                item.addEventListener('mouseup', function(e){
+                    if (mouseDown && selectedItem) {
+                        mouseDown = false;
+                        safeRemoveClass(selectedItem, 'is-moving');
+                        positionItemsInOrder();
+                    }
+                });
+                
+                // Touch events
+                item.addEventListener('touchstart', function(e){
+                    e.preventDefault();
+                    if(resetTransition || item.classList.contains('locked')) return;
+                    let touch = e.touches[0];
+                    pos.x = touch.clientX - container.offsetLeft;
+                    pos.y = touch.clientY - (container.offsetTop - window.scrollY);
+                    if(!pos.x) return;
+                    mouseDown = true;
+                    selectedItem = item;
+                    diff.y = pos.y - item.offsetTop;
+                    diff.x = pos.x - item.offsetLeft;
+                    let offsetY = pos.y - diff.y;
+                    let offsetX = pos.x - diff.x;
+                    item.style.top = offsetY + 'px';
+                    item.style.left = offsetX  + 'px';
+                    item.style.zIndex = '1000';
+                    item.setAttribute('selected', 'yes');
+                    safeAddClass(item, 'is-moving');
+                });
+                
+                item.addEventListener('touchend', function(e){
+                    if (mouseDown && selectedItem) {
+                        mouseDown = false;
+                        safeRemoveClass(selectedItem, 'is-moving');
+                        positionItemsInOrder();
+                    }
+                });
+            });
+
+            // Global mouse move event
+            addEventListener('mousemove', function(e){
+                pos.x = e.clientX - container.offsetLeft;
+                pos.y = e.clientY - (container.offsetTop - window.scrollY);
+                if(!mouseDown || !selectedItem) return;
+                
+                let offsetY = pos.y - diff.y;
+                let offsetX = pos.x - diff.x;
+                selectedItem.style.top = offsetY + 'px';
+                selectedItem.style.left = offsetX + 'px';
+                
+                let orderOfSelectedItem = Number(selectedItem.getAttribute('order'));
+                
+                if(orderOfSelectedItem !== 1){
+                    let beforeItem = document.querySelector(`.word-container .draggable[order="${orderOfSelectedItem - 1}"]`);
+                    if(beforeItem){
+                        let beforeMiddle = pos.x < beforeItem.offsetLeft + (beforeItem.clientWidth / 2);
+                        if(beforeMiddle){
+                            positionItems(orderOfSelectedItem - 1);
+                            selectedItem.setAttribute('order', orderOfSelectedItem - 1);
+                            return;
+                        }
+                    }
+                };
+                
+                if(orderOfSelectedItem !== document.querySelectorAll('.word-container .draggable').length){
+                    let afterItem = document.querySelector(`.word-container .draggable[order="${orderOfSelectedItem + 1}"]`);
+                    if(afterItem){
+                        let afterMiddle = pos.x > afterItem.offsetLeft + (afterItem.clientWidth / 2);
+                        if(afterMiddle){
+                            positionItems(orderOfSelectedItem + 1);
+                            selectedItem.setAttribute('order', orderOfSelectedItem + 1);
+                            return;
+                        }
+                    }
+                };
+            });
+            
+            // Global touch move event
+            addEventListener('touchmove', function(e){
+                e.preventDefault();
+                if(!mouseDown || !selectedItem) return;
+                
+                let touch = e.touches[0];
+                pos.x = touch.clientX - container.offsetLeft;
+                pos.y = touch.clientY - (container.offsetTop - window.scrollY);
+                
+                let offsetY = pos.y - diff.y;
+                let offsetX = pos.x - diff.x;
+                selectedItem.style.top = offsetY + 'px';
+                selectedItem.style.left = offsetX + 'px';
+                
+                let orderOfSelectedItem = Number(selectedItem.getAttribute('order'));
+                
+                if(orderOfSelectedItem !== 1){
+                    let beforeItem = document.querySelector(`.word-container .draggable[order="${orderOfSelectedItem - 1}"]`);
+                    if(beforeItem){
+                        let beforeMiddle = pos.x < beforeItem.offsetLeft + (beforeItem.clientWidth / 2);
+                        if(beforeMiddle){
+                            positionItems(orderOfSelectedItem - 1);
+                            selectedItem.setAttribute('order', orderOfSelectedItem - 1);
+                            return;
+                        }
+                    }
+                };
+                
+                if(orderOfSelectedItem !== document.querySelectorAll('.word-container .draggable').length){
+                    let afterItem = document.querySelector(`.word-container .draggable[order="${orderOfSelectedItem + 1}"]`);
+                    if(afterItem){
+                        let afterMiddle = pos.x > afterItem.offsetLeft + (afterItem.clientWidth / 2);
+                        if(afterMiddle){
+                            positionItems(orderOfSelectedItem + 1);
+                            selectedItem.setAttribute('order', orderOfSelectedItem + 1);
+                            return;
+                        }
+                    }
+                };
+            });
         }
 
         function askQuestion() {
-            // Finger animasyonunu durdur
-            stopIntroLoop();
+
+            if (gameState === 'question') {
+        // Sadece soruyu değiştir - hızlı animasyon
+        questionText.classList.remove('show');
+        setTimeout(function() {
+            var randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            questionText.textContent = randomQuestion;
+            questionText.classList.add('show');
+        }, 300);
+    } else {
             
             var draggableButtons = document.querySelectorAll(".draggable");
             var combinedText = "";
@@ -439,203 +795,135 @@
 
             var randomQuestion = questions[Math.floor(Math.random() * questions.length)];
             
-            // Taşları kilitle ve birleştir
-            draggableButtons.forEach(function(button, index) {
-                button.classList.add('locked');
-                // Kartları ortaya doğru yaklaştır
-                if (index === 0) {
-                    button.style.transform = 'translateX(15px) scale(1.05)';
-                } else if (index === 1) {
-                    button.style.transform = 'translateX(0px) scale(1.05)';
-                } else if (index === 2) {
-                    button.style.transform = 'translateX(-15px) scale(1.05)';
-                }
-            });
-            
-            // Sadece soruyu göster (kelimeyi tekrar yazma)
-            document.getElementById('combinedWord').textContent = randomQuestion;
-            
-            document.getElementById('combinedWord').classList.add('bounce');
+            // First: Move all syllables to center and scale them down and Hide individual syllables
             setTimeout(function() {
-                document.getElementById('combinedWord').classList.remove('bounce');
-            }, 600);
+                const containerWidth = 320;
+                const centerX = containerWidth / 2 - 50; // Center position for merged word
+                
+                draggableButtons.forEach(function(button, index) {
+                    button.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    button.style.opacity = '0.8';
+                    button.style.transform = 'scale(0)';
+                    
+                });
+            }, 100);
+            
+            // Second: show merged word
+            setTimeout(function() {
+                // Create merged word element as text
+                const mergedWord = document.createElement('div');
+                mergedWord.className = 'merged-word-text';
+                mergedWord.textContent = combinedText;
+                mergedWord.style.position = 'absolute';
+                
+                // Simple centering without width restrictions
+                mergedWord.style.left = '0px';
+                mergedWord.style.right = '0px';
+                mergedWord.style.top = '35px';
+                mergedWord.style.opacity = '0';
+                mergedWord.style.transform = 'scale(1.5) translateY(-10px)';
+                mergedWord.style.color = ' #2A51C6';
+                mergedWord.style.fontFamily = 'Nunito, sans-serif';
+                mergedWord.style.fontWeight = '900';
+                mergedWord.style.fontSize = combinedText.length > 7 ? '3rem' : '3.5rem';
+                mergedWord.style.textAlign = 'center';
+                mergedWord.style.height = '100px';
+                mergedWord.style.display = 'flex';
+                mergedWord.style.alignItems = 'center';
+                mergedWord.style.justifyContent = 'center';
+                mergedWord.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                container.appendChild(mergedWord);
+                
+                // Animate merged word appearance
+                setTimeout(function() {
+                    mergedWord.style.opacity = '1';
+                    mergedWord.style.transform = 'scale(1) translateY(0px)';
+                }, 50);
+                
+            }, 150);
+            
+            // Third: Show question with animation
+            setTimeout(function() {
+                questionText.textContent = randomQuestion;
+                questionText.classList.add('show');
+                updateGameState('question');
+            }, 300);
+            }
         }
 
         function resetGame() {
             var draggableButtons = document.querySelectorAll(".draggable");
             
+            // Remove merged word if exists
+            var mergedWord = document.querySelector('.merged-word-text');
+            if (mergedWord) {
+                mergedWord.remove();
+            }
+            
             draggableButtons.forEach(function(button) {
                 button.classList.remove('locked');
-                // Transform'ları sıfırla
                 button.style.transform = '';
+                button.style.opacity = '1';
+                button.style.transition = '';
+                button.removeAttribute('selected');
+                button.removeAttribute('order');
             });
             
-            document.getElementById('combinedWord').textContent = 'kelimen hazırsa başlat 👍';
+            questionText.classList.remove('show');
+            questionText.textContent = '';
+            updateGameState('initial');
         }
 
         function loadNewWords() {
-            var shuffledWords = words.slice().sort(function() { return Math.random() - 0.5; });
             
-            var draggableButtons = document.querySelectorAll(".draggable");
-            draggableButtons.forEach(function(button, index) {
-                button.style.transform = 'scale(0)';
-                setTimeout(function() {
-                    button.textContent = shuffledWords[index] || "KELİME";
-                    button.style.transform = 'scale(1)';
-                }, index * 100);
-            });
+            
+            var numSyllables = Math.random() < 0.5 ? 2 : 3;
+            var shuffledSyllables = syllables.slice().sort(function() { return Math.random() - 0.5; });
+            
+            // Calculate centered positioning
+            const containerWidth = 320;
+            const itemWidth = 110;
+            const totalItemsWidth = numSyllables * itemWidth - 10;
+            const startX = (containerWidth - totalItemsWidth) / 2;
+            
+            // Clear all existing syllables first
+            container.innerHTML = '';
+            
+            // Create new syllables based on the chosen number
+            for (var i = 0; i < numSyllables; i++) {
+                var syllableDiv = document.createElement('div');
+                syllableDiv.className = 'draggable';
+                syllableDiv.textContent = shuffledSyllables[i] || "hece";
+                syllableDiv.style.opacity = '0';
+                syllableDiv.style.transform = 'scale(0.5) translateY(-10px)';
+                syllableDiv.style.left = startX + (110 * i) + 'px';
+                syllableDiv.setAttribute('order', i + 1);
+                container.appendChild(syllableDiv);
+                
+                // Animate appearance with staggered delay - CSS-only approach
+(function(index, element) {
+    setTimeout(function() {
+        element.classList.add('word-appear');
+        setTimeout(function() {
+            element.classList.remove('word-appear');
+        }, 600);
+    }, index * 150);
+})(i, syllableDiv);
+            }
+            
+            // Update container width - removed to keep fixed width
+            // container.style.width = (numSyllables * 110) + (numSyllables * 10) + 'px';
             
             setTimeout(function() {
-                document.getElementById('combinedWord').textContent = 'kelimen hazırsa başlat 👍';
                 resetGame();
-                
-                if (!hasUserDragged) {
-                    // Mevcut intro'yu durdur ve yeniden başlat
-                    stopIntroLoop();
-                    startIntroLoop();
-                }
+                initializeDragSystem();
             }, 300);
         }
 
-        function startIntroLoop() {
-            // İlk demonstrasyonu biraz gecikmeyle başlat
-            setTimeout(function() {
-                demonstrateShuffle();
-            }, 500);
-            
-            // 5 saniye aralıklarla tekrarla
-            introInterval = setInterval(function() {
-                if (!hasUserDragged) {
-                    demonstrateShuffle();
-                } else {
-                    stopIntroLoop();
-                }
-            }, 5000);
-        }
-
-        function stopIntroLoop() {
-            if (introInterval) {
-                clearInterval(introInterval);
-                introInterval = null;
-            }
-            
-            var finger = document.getElementById('fingerDemo');
-            if (finger) {
-                finger.style.opacity = '0';
-            }
-        }
-
-        function demonstrateShuffle() {
-            if (hasUserDragged) {
-                stopIntroLoop();
-                return;
-            }
-            
-            var allCards = Array.from(container.querySelectorAll('.draggable'));
-            var finger = document.getElementById('fingerDemo');
-            
-            var cardIndex = Math.random() < 0.5 ? 0 : 1;
-            var cardToMove = allCards[cardIndex];
-            var targetIndex = cardIndex === 0 ? 1 : 0;
-            
-            var cardRect = cardToMove.getBoundingClientRect();
-            var containerRect = container.getBoundingClientRect();
-            
-            finger.style.position = 'absolute';
-            finger.style.left = (cardRect.left - containerRect.left + cardRect.width / 2 - 25) + 'px';
-            finger.style.top = (cardRect.top - containerRect.top + cardRect.height + 10) + 'px';
-            finger.style.opacity = '1';
-            finger.style.zIndex = '1500';
-            
-            setTimeout(function() {
-                cardToMove.classList.add('is-moving');
-                
-                var targetCard = allCards[targetIndex];
-                var targetRect = targetCard.getBoundingClientRect();
-                
-                finger.style.left = (targetRect.left - containerRect.left + targetRect.width / 2 - 25) + 'px';
-                finger.style.transition = 'all 0.8s ease';
-            }, 500);
-            
-            setTimeout(function() {
-                cardToMove.classList.remove('is-moving');
-                
-                if (cardIndex === 0) {
-                    container.insertBefore(cardToMove, allCards[1].nextSibling);
-                } else {
-                    container.insertBefore(cardToMove, allCards[0]);
-                }
-                
-                cardToMove.classList.add('is-moved');
-                setTimeout(function() {
-                    cardToMove.classList.remove('is-moved');
-                }, 600);
-            }, 1300);
-            
-            setTimeout(function() {
-                finger.style.opacity = '0';
-                finger.style.transition = 'all 0.3s ease';
-            }, 2000);
-        }
-
-        document.getElementById('helpModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideHelp();
-            }
-        });
-
+        // Initialize the game
         document.addEventListener('DOMContentLoaded', function() {
-            var initialX = 0;
-            var currentX = 0;
-            var lastMoveTime = 0;
-            
-            container.addEventListener('touchstart', function(e) {
-                if (e.target.classList.contains('draggable') && !e.target.classList.contains('locked')) {
-                    e.preventDefault();
-                    var touch = e.touches[0];
-                    startX = touch.clientX;
-                    startY = touch.clientY;
-                    initialX = touch.clientX;
-                    lastMoveTime = 0;
-                    
-                    if (!isDragging) {
-                        startDrag(e.target);
-                    }
-                }
-            }, { passive: false });
-
-            container.addEventListener('touchmove', function(e) {
-                if (!draggedElement || !isDragging) return;
-                e.preventDefault();
-                
-                var touch = e.touches[0];
-                currentX = touch.clientX;
-                var deltaX = currentX - initialX;
-                var now = Date.now();
-                
-                if (Math.abs(deltaX) > 55 && now - lastMoveTime > 200) {
-                    var allCards = Array.from(container.children);
-                    var draggedIndex = allCards.indexOf(draggedElement);
-                    
-                    if (deltaX > 55 && draggedIndex < allCards.length - 1) {
-                        var nextCard = allCards[draggedIndex + 1];
-                        container.insertBefore(draggedElement, nextCard.nextSibling);
-                        initialX = currentX;
-                        lastMoveTime = now;
-                    } else if (deltaX < -55 && draggedIndex > 0) {
-                        var prevCard = allCards[draggedIndex - 1];
-                        container.insertBefore(draggedElement, prevCard);
-                        initialX = currentX;
-                        lastMoveTime = now;
-                    }
-                }
-            }, { passive: false });
-
-            container.addEventListener('touchend', function(e) {
-                if (isDragging && draggedElement) {
-                    endDrag();
-                }
-            }, { passive: false });
+            updateGameState('initial');
+            initializeDragSystem();
         });
     </script>
 </body>
