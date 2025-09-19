@@ -484,20 +484,6 @@
     <script>
         var gameState = 'initial'; // 'initial', 'ready', 'question'
 
-        // Dice sound - Base64 audio data
-        var diceSound = new Audio('paste here base64');
-        diceSound.volume = 0.3; // Set volume to 30%
-
-        function playDiceSound() {
-            try {
-                diceSound.currentTime = 0; // Reset to beginning
-                diceSound.play();
-            } catch (e) {
-                // Silently handle any audio errors
-                console.log('Audio playback not available');
-            }
-        }
-
         var syllables = [
             "ak", "al", "aşk", "at", "ay", "az", "bal", "baş", "bel", "ben", "bin", "bir", "biz", "bol", "boş", "bu", 
             "bul", "buz", "cam", "can", "caz", "cep", "çay", "çek", "çip", "çok", "çöp", "dağ", "dar", "dem", "dik", 
